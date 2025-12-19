@@ -23,11 +23,9 @@
       overflow: hidden;
     }
 
-    /* CAPA */
     .capa {
       height: 180px;
       background: url("assets/capa.jpg") center / cover no-repeat;
-      position: relative;
     }
 
     .overlay {
@@ -39,7 +37,6 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 10px;
     }
 
     .overlay h1 {
@@ -52,7 +49,6 @@
       font-size: 14px;
     }
 
-    /* CONTEÚDO */
     .conteudo {
       padding: 18px;
     }
@@ -85,12 +81,6 @@
       background: #15803d;
     }
 
-    .termo {
-      font-size: 12px;
-      margin-bottom: 10px;
-      display: block;
-    }
-
     .timer {
       text-align: center;
       font-size: 22px;
@@ -98,124 +88,135 @@
       font-weight: bold;
       color: #dc2626;
     }
-
-    .whatsapp {
-      background: #25D366;
-      margin-top: 10px;
-      display: none;
-    }
   </style>
 </head>
 <body>
 
-  <div class="card">
+<div class="card">
 
-    <!-- CAPA -->
-    <div class="capa">
-      <div class="overlay">
-        <h1>Araçá Motors</h1>
-        <p>Aluguel de Scooter</p>
-      </div>
+  <div class="capa">
+    <div class="overlay">
+      <h1>Araçá Motors</h1>
+      <p>Aluguel de Scooter</p>
     </div>
-
-    <!-- FORMULÁRIO -->
-    <div class="conteudo">
-      <label>Nome:</label>
-      <input id="nome" placeholder="Nome completo">
-
-      <label>Telefone:</label>
-      <input id="telefone" placeholder="Telefone">
-
-      <label>CPF:</label>
-      <input id="cpf" placeholder="CPF">
-
-      <label>Tempo contratado:</label>
-      <select id="tempo">
-        <option value="">Selecione</option>
-        <option value="15">15 minutos</option>
-        <option value="30">30 minutos</option>
-      </select>
-
-      <label class="termo">
-        <input type="checkbox" id="termo">
-        Declaro que recebi a scooter em perfeitas condições e me responsabilizo pelo uso.
-      </label>
-
-      <button id="btn" onclick="prosseguir()">Iniciar passeio</button>
-
-      <div id="timer" class="timer"></div>
-
-      <button id="zap" class="whatsapp" onclick="abrirWhats()">
-        Avisar a loja no WhatsApp
-      </button>
-    </div>
-
   </div>
 
-  <script>
-    let intervalo;
+  <div class="conteudo">
+    <label>Nome:</label>
+    <input id="nome">
 
-    function prosseguir() {
-      const nome = document.getElementById('nome');
-      const telefone = document.getElementById('telefone');
-      const cpf = document.getElementById('cpf');
-      const tempo = document.getElementById('tempo');
-      const termo = document.getElementById('termo');
-      const botao = document.getElementById('btn');
+    <label>Telefone:</label>
+    <input id="telefone">
 
-      if (!nome.value || !telefone.value || !cpf.value || !tempo.value) {
-        alert('Preencha todos os campos');
-        return;
-      }
+    <label>CPF:</label>
+    <input id="cpf">
 
-      if (!termo.checked) {
-        alert('Você precisa aceitar o termo');
-        return;
-      }
+    <label>Tempo contratado:</label>
+    <select id="tempo">
+      <option value="">Selecione</option>
+      <option value="15">15 minutos</option>
+      <option value="30">30 minutos</option>
+    </select>
 
-      nome.disabled = true;
-      telefone.disabled = true;
-      cpf.disabled = true;
-      tempo.disabled = true;
-      termo.disabled = true;
-      botao.style.display = 'none';
+    <label>
+      <input type="checkbox" id="termo">
+      Declaro que recebi a scooter em perfeitas condições e me responsabilizo pelo uso.
+    </label>
 
-      const minutos = tempo.value == 15 ? 16 : 31;
-      const fim = new Date(Date.now() + minutos * 60000);
+    <button id="btn" onclick="prosseguir()">Iniciar passeio</button>
 
-      iniciarTimer(fim);
-    }
+    <div id="timer" class="timer"></div>
+  </div>
 
-    function iniciarTimer(fim) {
+</div>
+
+<script>
+let intervalo;
+let dados = {};
+
+function prosseguir() {
+  const nome = document.getElementById('nome');
+  const telefone = document.getElementById('telefone');
+  const cpf = document.getElementById('cpf');
+  const tempo = document.getElementById('tempo');
+  const termo = document.getElementById('termo');
+  const botao = document.getElementById('btn');
+
+  if (!nome.value || !telefone.value || !cpf.value || !tempo.value) {
+    alert('Preencha todos os campos');
+    return;
+  }
+
+  if (!termo.checked) {
+    alert('Aceite o termo');
+    return;
+  }
+
+  nome.disabled = telefone.disabled = cpf.disabled = tempo.disabled = termo.disabled = true;
+  botao.style.display = 'none';
+
+  const minutos = tempo.value == 15 ? 16 : 31;
+  const inicio = new Date();
+  const fim = new Date(inicio.getTime() + minutos * 60000);
+
+  dados = {
+    nome: nome.value,
+    telefone: telefone.value,
+    cpf: cpf.value,
+    tempo: tempo.value,
+    inicio
+  };
+
+  enviarWhatsInicio();
+  iniciarTimer(fim);
+}
+
+function iniciarTimer(fim) {
+  intervalo = setInterval(() => {
+    const diff = fim - new Date();
+
+    if (diff <= 0) {
       clearInterval(intervalo);
-
-      intervalo = setInterval(() => {
-        const diff = fim - new Date();
-
-        if (diff <= 0) {
-          clearInterval(intervalo);
-          document.getElementById('timer').innerText = '⏰ TEMPO ENCERRADO';
-          document.getElementById('zap').style.display = 'block';
-          alert('Tempo encerrado! Dirija-se à loja.');
-          return;
-        }
-
-        const min = Math.floor(diff / 60000);
-        const seg = Math.floor((diff % 60000) / 1000);
-
-        document.getElementById('timer').innerText =
-          `Tempo restante: ${min}:${seg.toString().padStart(2, '0')}`;
-      }, 1000);
+      document.getElementById('timer').innerText = '⏰ TEMPO ENCERRADO';
+      enviarWhatsFim();
+      alert('Tempo encerrado! Dirija-se à loja.');
+      return;
     }
 
-    function abrirWhats() {
-      const numero = '5581996833664';
-      const mensagem = encodeURIComponent(
-        'Olá! Meu tempo de passeio com a Araçá Motors foi encerrado.'
-      );
-      window.open(`https://wa.me/${numero}?text=${mensagem}`, '_blank');
-    }
-  </script>
+    const min = Math.floor(diff / 60000);
+    const seg = Math.floor((diff % 60000) / 1000);
+
+    document.getElementById('timer').innerText =
+      `Tempo restante: ${min}:${seg.toString().padStart(2, '0')}`;
+  }, 1000);
+}
+
+function enviarWhatsInicio() {
+  const numero = '5581996833664';
+  const msg = `
+🛴 INÍCIO DE PASSEIO – ARAÇÁ MOTORS
+
+Nome: ${dados.nome}
+Telefone: ${dados.telefone}
+CPF: ${dados.cpf}
+Tempo: ${dados.tempo} minutos
+Início: ${dados.inicio.toLocaleTimeString()}
+  `;
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function enviarWhatsFim() {
+  const numero = '5581996833664';
+  const msg = `
+⏰ PASSEIO ENCERRADO – ARAÇÁ MOTORS
+
+Nome: ${dados.nome}
+Tempo contratado: ${dados.tempo} minutos
+Término: ${new Date().toLocaleTimeString()}
+  `;
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
 
 </body>
 </html>
