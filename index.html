@@ -103,13 +103,13 @@
 
   <div class="conteudo">
     <label>Nome:</label>
-    <input id="nome" placeholder="Nome completo">
+    <input id="nome">
 
     <label>Telefone:</label>
-    <input id="telefone" placeholder="DDD + número">
+    <input id="telefone">
 
     <label>CPF:</label>
-    <input id="cpf" placeholder="CPF">
+    <input id="cpf">
 
     <label>Tempo contratado:</label>
     <select id="tempo">
@@ -133,10 +133,6 @@
 <script>
 let intervalo;
 let dados = {};
-
-function formatarNumero(numero) {
-  return '55' + numero.replace(/\D/g, '');
-}
 
 function prosseguir() {
   const nome = document.getElementById('nome');
@@ -196,25 +192,21 @@ function iniciarTimer(fim) {
 }
 
 function enviarWhatsInicio() {
-  const loja = '5581996833624';
-  const cliente = formatarNumero(dados.telefone);
-
+  const numero = '5581996833624';
   const msg = `
 🛴 INÍCIO DE PASSEIO – ARAÇÁ MOTORS
 
 Nome: ${dados.nome}
-Tempo contratado: ${dados.tempo} minutos
+Telefone: ${dados.telefone}
+CPF: ${dados.cpf}
+Tempo: ${dados.tempo} minutos
 Início: ${dados.inicio.toLocaleTimeString()}
   `;
-
-  window.open(`https://wa.me/${loja}?text=${encodeURIComponent(msg)}`, '_blank');
-  window.open(`https://wa.me/${cliente}?text=${encodeURIComponent(msg)}`, '_blank');
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 function enviarWhatsFim() {
-  const loja = '5581996833624';
-  const cliente = formatarNumero(dados.telefone);
-
+  const numero = '5581996833624';
   const msg = `
 ⏰ PASSEIO ENCERRADO – ARAÇÁ MOTORS
 
@@ -222,9 +214,7 @@ Nome: ${dados.nome}
 Tempo contratado: ${dados.tempo} minutos
 Término: ${new Date().toLocaleTimeString()}
   `;
-
-  window.open(`https://wa.me/${loja}?text=${encodeURIComponent(msg)}`, '_blank');
-  window.open(`https://wa.me/${cliente}?text=${encodeURIComponent(msg)}`, '_blank');
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 </script>
 
