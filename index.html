@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Araçá Motors – Aluguel de Scooter</title>
+
+  <style>
+    body {
+      background: #0f172a;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: #ffffff;
+      width: 360px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
+      overflow: hidden;
+    }
+
+    /* CAPA */
+    .capa {
+      height: 180px;
+      background: url("assets/capa.jpg") center / cover no-repeat;
+      position: relative;
+    }
+
+    .overlay {
+      background: rgba(0,0,0,0.55);
+      color: white;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .overlay h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .overlay p {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    /* CONTEÚDO */
+    .conteudo {
+      padding: 18px;
+    }
+
+    label {
+      font-size: 14px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+
+    button:hover {
+      background: #15803d;
+    }
+
+    .termo {
+      font-size: 12px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .timer {
+      text-align: center;
+      font-size: 22px;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #dc2626;
+    }
+
+    .whatsapp {
+      background: #25D366;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- CAPA -->
+    <div class="capa">
+      <div class="overlay">
+        <h1>Araçá Motors</h1>
+        <p>Aluguel de Scooter</p>
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <div class="conteudo">
+      <label>Nome:</label>
+      <input id="nome" placeholder="Nome completo">
+
+      <label>Telefone:</label>
+      <input id="telefone" placeholder="Telefone">
+
+      <label>CPF:</label>
+      <input id="cpf" placeholder="CPF">
+
+      <label>Tempo contratado:</label>
+      <select id="tempo">
+        <option value="">Selecione</option>
+        <option value="15">15 minutos</option>
+        <option value="30">30 minutos</option>
+      </select>
+
+      <label class="termo">
+        <input type="checkbox" id="termo">
+        Declaro que recebi a scooter em perfeitas condições e me responsabilizo pelo uso.
+      </label>
+
+      <button id="btn" onclick="prosseguir()">Iniciar passeio</button>
+
+      <div id="timer" class="timer"></div>
+
+      <button id="zap" class="whatsapp" onclick="abrirWhats()">
+        Avisar a loja no WhatsApp
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    let intervalo;
+
+    function prosseguir() {
+      const nome = document.getElementById('nome');
+      const telefone = document.getElementById('telefone');
+      const cpf = document.getElementById('cpf');
+      const tempo = document.getElementById('tempo');
+      const termo = document.getElementById('termo');
+      const botao = document.getElementById('btn');
+
+      if (!nome.value || !telefone.value || !cpf.value || !tempo.value) {
+        alert('Preencha todos os campos');
+        return;
+      }
+
+      if (!termo.checked) {
+        alert('Você precisa aceitar o termo');
+        return;
+      }
+
+      nome.disabled = true;
+      telefone.disabled = true;
+      cpf.disabled = true;
+      tempo.disabled = true;
+      termo.disabled = true;
+      botao.style.display = 'none';
+
+      const minutos = tempo.value == 15 ? 16 : 31;
+      const fim = new Date(Date.now() + minutos * 60000);
+
+      iniciarTimer(fim);
+    }
+
+    function iniciarTimer(fim) {
+      clearInterval(intervalo);
+
+      intervalo = setInterval(() => {
+        const diff = fim - new Date();
+
+        if (diff <= 0) {
+          clearInterval(intervalo);
+          document.getElementById('timer').innerText = '⏰ TEMPO ENCERRADO';
+          document.getElementById('zap').style.display = 'block';
+          alert('Tempo encerrado! Dirija-se à loja.');
+          return;
+        }
+
+        const min = Math.floor(diff / 60000);
+        const seg = Math.floor((diff % 60000) / 1000);
+
+        document.getElementById('timer').innerText =
+          `Tempo restante: ${min}:${seg.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+
+    function abrirWhats() {
+      const numero = '5581996833664';
+      const mensagem = encodeURIComponent(
+        'Olá! Meu tempo de passeio com a Araçá Motors foi encerrado.'
+      );
+      window.open(`https://wa.me/${numero}?text=${mensagem}`, '_blank');
+    }
+  </script>
+
+</body>
+</html>
