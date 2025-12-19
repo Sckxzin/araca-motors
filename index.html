@@ -158,7 +158,6 @@ function prosseguir() {
     return;
   }
 
-  // trava formulário
   nome.disabled = telefone.disabled = cpf.disabled = tempo.disabled = termo.disabled = true;
   botao.style.display = 'none';
 
@@ -171,7 +170,8 @@ function prosseguir() {
     telefone: telefone.value,
     cpf: cpf.value,
     tempo: tempo.value,
-    inicio
+    inicio,
+    fim
   };
 
   enviarWhatsInicio();
@@ -209,9 +209,10 @@ Olá ${dados.nome},
 Seu passeio foi iniciado com sucesso.
 
 ⏱️ Tempo contratado: ${dados.tempo} minutos
-🕒 Início: ${dados.inicio.toLocaleTimeString()}
+🕒 Início: ${dados.inicio.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+⏰ Término previsto: ${dados.fim.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 
-Boa experiência!
+Boa experiência! ✅
   `;
 
   window.open(
@@ -230,9 +231,9 @@ Olá ${dados.nome},
 
 Seu tempo de passeio foi encerrado.
 
-🕒 Término: ${new Date().toLocaleTimeString()}
+🕒 Término: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 
-Por favor, dirija-se ao ponto de devolução.
+Obrigado por utilizar nossos serviços.
   `;
 
   window.open(
