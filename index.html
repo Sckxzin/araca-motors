@@ -94,6 +94,7 @@
 
 <div class="card">
 
+  <!-- CAPA -->
   <div class="capa">
     <div class="overlay">
       <h1>Araçá Motors</h1>
@@ -101,15 +102,16 @@
     </div>
   </div>
 
+  <!-- FORMULÁRIO (VENDEDOR) -->
   <div class="conteudo">
-    <label>Nome:</label>
-    <input id="nome">
+    <label>Nome do cliente:</label>
+    <input id="nome" placeholder="Nome completo">
 
-    <label>Telefone:</label>
-    <input id="telefone">
+    <label>Telefone do cliente:</label>
+    <input id="telefone" placeholder="DDD + número">
 
     <label>CPF:</label>
-    <input id="cpf">
+    <input id="cpf" placeholder="CPF">
 
     <label>Tempo contratado:</label>
     <select id="tempo">
@@ -120,7 +122,7 @@
 
     <label>
       <input type="checkbox" id="termo">
-      Declaro que recebi a scooter em perfeitas condições e me responsabilizo pelo uso.
+      Declaro que o cliente recebeu o veículo em perfeitas condições.
     </label>
 
     <button id="btn" onclick="prosseguir()">Iniciar passeio</button>
@@ -133,6 +135,10 @@
 <script>
 let intervalo;
 let dados = {};
+
+function formatarNumero(numero) {
+  return '55' + numero.replace(/\D/g, '');
+}
 
 function prosseguir() {
   const nome = document.getElementById('nome');
@@ -148,10 +154,11 @@ function prosseguir() {
   }
 
   if (!termo.checked) {
-    alert('Aceite o termo');
+    alert('Confirme o termo');
     return;
   }
 
+  // trava formulário
   nome.disabled = telefone.disabled = cpf.disabled = tempo.disabled = termo.disabled = true;
   botao.style.display = 'none';
 
@@ -179,7 +186,7 @@ function iniciarTimer(fim) {
       clearInterval(intervalo);
       document.getElementById('timer').innerText = '⏰ TEMPO ENCERRADO';
       enviarWhatsFim();
-      alert('Tempo encerrado! Dirija-se à loja.');
+      alert('Tempo encerrado!');
       return;
     }
 
@@ -192,29 +199,46 @@ function iniciarTimer(fim) {
 }
 
 function enviarWhatsInicio() {
-  const numero = '5581996833624';
-  const msg = `
-🛴 INÍCIO DE PASSEIO – ARAÇÁ MOTORS
+  const cliente = formatarNumero(dados.telefone);
 
-Nome: ${dados.nome}
-Telefone: ${dados.telefone}
-CPF: ${dados.cpf}
-Tempo: ${dados.tempo} minutos
-Início: ${dados.inicio.toLocaleTimeString()}
+  const msg = `
+🛴 PASSEIO INICIADO – ARAÇÁ MOTORS
+
+Olá ${dados.nome},
+
+Seu passeio foi iniciado com sucesso.
+
+⏱️ Tempo contratado: ${dados.tempo} minutos
+🕒 Início: ${dados.inicio.toLocaleTimeString()}
+
+Boa experiência!
   `;
-  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  window.open(
+    `https://wa.me/${cliente}?text=${encodeURIComponent(msg)}`,
+    '_blank'
+  );
 }
 
 function enviarWhatsFim() {
-  const numero = '5581996833624';
+  const cliente = formatarNumero(dados.telefone);
+
   const msg = `
 ⏰ PASSEIO ENCERRADO – ARAÇÁ MOTORS
 
-Nome: ${dados.nome}
-Tempo contratado: ${dados.tempo} minutos
-Término: ${new Date().toLocaleTimeString()}
+Olá ${dados.nome},
+
+Seu tempo de passeio foi encerrado.
+
+🕒 Término: ${new Date().toLocaleTimeString()}
+
+Por favor, dirija-se ao ponto de devolução.
   `;
-  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(msg)}`, '_blank');
+
+  window.open(
+    `https://wa.me/${cliente}?text=${encodeURIComponent(msg)}`,
+    '_blank'
+  );
 }
 </script>
 
